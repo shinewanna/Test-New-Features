@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_version/get_version.dart';
+import 'package:testing_new_features/draggable.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
@@ -15,9 +16,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String APP_STORE_URL =
+  List<String> text = ["Shine", "Wanna", "Kyaw", "Lin", "Htwe", "Jupine"];
+  static const String APP_STORE_URL =
       'https://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftwareUpdate?id=APP_ID&mt=8';
-  String PLAY_STORE_URL =
+  static const String PLAY_STORE_URL =
       'https://play.google.com/store/apps/details?id=com.asaygo.eslite';
   String _projectCode = '';
   @override
@@ -100,9 +102,29 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Test Auto Update'),
-      ),
-    );
+        appBar: AppBar(
+          title: Text('Test Auto Update/Reorderable List'),
+        ),
+        body: ReorderableListView(
+          children: text.map((f) {
+            return ListTile(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Drag()));
+              },
+              key: ObjectKey(f),
+              title: Text(f),
+            );
+          }).toList(),
+          onReorder: (int oldIndex, int newIndex) {
+            setState(() {
+              if (newIndex > oldIndex) newIndex -= 1;
+              var element = text.removeAt(oldIndex);
+              text.insert(newIndex, element);
+            });
+          },
+        ));
   }
 }
